@@ -28,24 +28,16 @@ $(document).ready(function () {
 
 // *Viewmodel*
 function AppViewModel() {
-    this.option1 = "Mook Pancakes";
-    this.option2 = "Back to Black";
-    this.option3 = "Zoku";
-    this.option4 = "Omelegg";
-    this.option5 = "Plantage";
-
+    var self = this;
+ 
+    self.places = ko.observableArray([
+        { name: 'Mook Pancakes', location: {lat: 52.368897, lng: 4.902816}},
+        { name: 'Back to Black', location: {lat: 52.361521, lng: 4.888642}},
+        { name: 'Zoku', location: {lat: 52.364461, lng: 4.906445}},
+        { name: 'Omelegg', location: {lat: 52.353339, lng: 4.891412}},
+        { name: 'Plantage', location: {lat: 52.366812, lng: 4.912598}}
+    ]);
 }
 
 // Activating knockout.js
 ko.applyBindings(new AppViewModel());
-
-
-
-
-    // self.places = [
-    //     { name: "mook_pancakes", location: {lat: 52.368897, lng: 4.902816}},
-    //     { name: "back_to_black", location: {lat: 52.361521, lng: 4.888642}},
-    //     { name: "zoku", location: {lat: 52.364461, lng: 4.906445}},
-    //     { name: "omelegg", location: {lat: 52.353339, lng: 4.891412}},
-    //     { name: "plantage", location: {lat: 52.366812, lng: 4.912598}},
-    // ];    

@@ -17,12 +17,8 @@
         <div class="sidebar-header">
           <h3>Neighborhood Map</h3>
         </div>
-        <ul class="list-unstyled components">
-          <li><a data-bind="text: option1">placeholder</a></li>
-          <li><a data-bind="text: option2">placeholder</a></li>
-          <li><a data-bind="text: option3">placeholder</a></li>
-          <li><a data-bind="text: option4">placeholder</a></li>
-          <li><a data-bind="text: option5">placeholder</a></li>
+        <ul data-bind="foreach: places" class="list-unstyled components">
+          <li><a data-bind="text: name"></a></li>
         </ul>
       </nav>
       <!-- Page Content Holder -->
