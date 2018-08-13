@@ -17,7 +17,10 @@
         <div class="sidebar-header">
           <h3>Neighborhood Map</h3>
         </div>
-        <ul data-bind="foreach: places" class="list-unstyled components">
+        <div>
+          <input class="form-control" placeholder="Find Brunch Place" type="search" name="filter" data-bind="textInput: query" autocomplete="off" />
+        </div>
+        <ul data-bind="foreach: filteredPlaces" class="list-unstyled components">
           <li><a data-bind="text: name"></a></li>
         </ul>
       </nav>
@@ -33,8 +36,7 @@
       </div>
     </div>
      <!-- Google Maps API -->
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAltC49pkfGQu0LfM_oHYlllasHOIxDubA&callback=initMap"
-async defer></script>
+     <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAltC49pkfGQu0LfM_oHYlllasHOIxDubA&callback=launchApp" onerror="errorMap()"></script>
      <!-- jQuery CDN -->
      <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
      <!-- Knockout CDN -->
