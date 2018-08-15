@@ -1,8 +1,7 @@
+// Static data
+var amsPosition = {lat: 52.368189, lng: 4.899431};
 
-
-var amsterdamPosition = {lat: 52.368189, lng: 4.899431};
-
-var locationsAmsterdam = [
+var amsLocations = [
         { name: 'Mook Pancakes', position: {lat: 52.368897, lng: 4.902816}},
         { name: 'Back to Black', position: {lat: 52.361521, lng: 4.888642}},
         { name: 'Zoku', position: {lat: 52.364461, lng: 4.906445}},
@@ -14,13 +13,8 @@ var locationsAmsterdam = [
 function AppViewModel() {
     var self = this;
 
-        // The map, centered at Amsterdam
-        var map = new google.maps.Map(
-        document.getElementById('map'), {zoom: 14, center: amsterdamPosition});
-
-
     // Filter functionality
-    var places = ko.observableArray(locationsAmsterdam);
+    var places = ko.observableArray(amsLocations);
     self.query = ko.observable('');
     self.filteredPlaces = ko.computed(
     function () {
@@ -30,12 +24,24 @@ function AppViewModel() {
            });
     });
 
+    // The map, centered at Amsterdam
+    var map = new google.maps.Map(
+    document.getElementById('map'), {zoom: 14, center: amsPosition});
+
     self.initMap = function() {
 
+        function createInfoWindow(marker) {
+            marker.setAnimation(google.maps.Animation.DROP);
+            var infowindow = new google.maps.InfoWindow();
+            infowindow.marker = marker;
+            infowindow.setContent(marker.title);
+            infowindow.open(map, marker);
+        }
+
         // Placing the markers and p
-        for (var i = 0; i < locationsAmsterdam.length; i++) {
+        for (var i = 0; i < amsLocations.length; i++) {
             // Adding marker to Map
-            var marker= new google.maps.Marker({position: locationsAmsterdam[i].position, map: map, title: locationsAmsterdam[i].name});
+            var marker= new google.maps.Marker({position: amsLocations[i].position, map: map, title: amsLocations[i].name});
 
             // Listen for click and open infowindow
             marker.addListener('click', function() {
@@ -45,23 +51,41 @@ function AppViewModel() {
     }
     self.initMap();
 
-
-    function createInfoWindow(marker) {
-          marker.setAnimation(google.maps.Animation.DROP);
-          var infowindow = new google.maps.InfoWindow();
-          infowindow.marker = marker;
-          infowindow.setContent(marker.title);
-          infowindow.open(map, marker);
-      }
-
     // Action when place clicked in sidebar
-    this.clickPlace = function(locationAmsterdam) {
-        console.log(locationAmsterdam);
-            // Adding marker to Map
-            var marker= new google.maps.Marker({position: locationAmsterdam.position, map: map, title: locationAmsterdam.name});
-            createInfoWindow(marker);
-
+    this.clickPlace = function(place) {
+        // Adding marker to Map
+        var marker= new google.maps.Marker({position: place.position, map: map, title: place.name});
+        createInfoWindow(marker);
     };
+
+    // Twitter search api
+    var twitterApi = "https://api.twitter.com/1.1/search/tweets.json";
+
+    // Twitter client id and secret
+    var client_id = "FZPMCSEYO134W0XYREE1QGP5TE4OXP2Z4QXCNAATK3MKIME0";
+    var client_secret = "YGNCPSLBHXFWEFRWR3E3I4JUV3YHMKT0J3I53GDNTAVOUTXM";
+
+    // Ajax request
+    $.ajax({
+        //  type: 'GET',
+        url: twitterApi,
+        data: {
+            client_id: client_id,
+            client_secret: client_secret,
+        },
+        headers: {
+
+        },
+        success: function(data) {
+            console.log(data);
+            var tweet = data.response.venues[0];
+
+            contentString = tweet;
+        },
+        error: function() {
+            contentString = "No tweets available. Please try again later!";
+        }
+    });
 }
 
 // Handling Maps error
