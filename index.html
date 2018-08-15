@@ -21,7 +21,7 @@
           <input class="form-control" placeholder="Find Brunch Place" type="search" name="filter" data-bind="textInput: query" autocomplete="off" />
         </div>
         <ul data-bind="foreach: filteredPlaces" class="list-unstyled components">
-          <li><a data-bind="text: name"></a></li>
+          <li><a data-bind="text: name, click: $parent.clickPlace"></a></li>
         </ul>
       </nav>
       <!-- Page Content Holder -->
