@@ -29,12 +29,56 @@ function AppViewModel() {
     document.getElementById('map'), {zoom: 14, center: amsPosition});
 
     self.initMap = function() {
-
         function createInfoWindow(marker) {
+            // Yelp search api
+            var foursquareSearchApi = "https://api.foursquare.com/v2/venues/search";
+            var foursquareVenuesApi = "https://api.foursquare.com/v2/venues/"
+
+            // API parameters
+            var client_id = "30QOMK0YSPXYE4KITHIQ31EGXR4JKMSLQJL20OOF5INLMONP";
+            var client_secret = "MUVZHUGKAARQQLQONA5KQU0A2PAVCLJARH0KYC3SX2OL1MXI";
+            var version = "20180816";
+            var near = "Amsterdam";
+            var query = marker.title;
+
+            // Ajax request for ID and more details
+            $.ajax({
+                url: foursquareSearchApi,
+                data: {
+                    client_id: client_id,
+                    client_secret: client_secret,
+                    v : version,
+                    near : near,
+                    query : query
+                },
+                success: function(data) {
+                    var venue_id = data.response.venues[0].id;
+                    $.ajax({
+                        url: foursquareVenuesApi+venue_id,
+                        data :{
+                            client_id: client_id,
+                            client_secret: client_secret,
+                            v : version,
+                        },
+                        success: function(data) {
+                            var tip = data.response.venue.tips.groups[0].items[0].text;
+                            infowindow.setContent('<div><b>'+ marker.title + '</b></div>'+
+                                '<div>' + tip + '</div>');
+                        },
+                        error: function() {
+                            alert("Oops, something went wrong, please try again.");
+                        }
+                    });
+
+                },
+                error: function() {
+                    alert("Something went wrong, please try again.");
+                }
+            });
+
             marker.setAnimation(google.maps.Animation.DROP);
-            var infowindow = new google.maps.InfoWindow();
+            var infowindow = new google.maps.InfoWindow({maxWidth: 200});
             infowindow.marker = marker;
-            infowindow.setContent(marker.title);
             infowindow.open(map, marker);
         }
 
@@ -57,35 +101,6 @@ function AppViewModel() {
         var marker= new google.maps.Marker({position: place.position, map: map, title: place.name});
         createInfoWindow(marker);
     };
-
-    // Twitter search api
-    var twitterApi = "https://api.twitter.com/1.1/search/tweets.json";
-
-    // Twitter client id and secret
-    var client_id = "FZPMCSEYO134W0XYREE1QGP5TE4OXP2Z4QXCNAATK3MKIME0";
-    var client_secret = "YGNCPSLBHXFWEFRWR3E3I4JUV3YHMKT0J3I53GDNTAVOUTXM";
-
-    // Ajax request
-    $.ajax({
-        //  type: 'GET',
-        url: twitterApi,
-        data: {
-            client_id: client_id,
-            client_secret: client_secret,
-        },
-        headers: {
-
-        },
-        success: function(data) {
-            console.log(data);
-            var tweet = data.response.venues[0];
-
-            contentString = tweet;
-        },
-        error: function() {
-            contentString = "No tweets available. Please try again later!";
-        }
-    });
 }
 
 // Handling Maps error
