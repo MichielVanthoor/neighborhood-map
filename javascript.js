@@ -29,60 +29,6 @@ function AppViewModel() {
     document.getElementById('map'), {zoom: 14, center: amsPosition});
 
     self.initMap = function() {
-        function createInfoWindow(marker) {
-            // Yelp search api
-            var foursquareSearchApi = "https://api.foursquare.com/v2/venues/search";
-            var foursquareVenuesApi = "https://api.foursquare.com/v2/venues/"
-
-            // API parameters
-            var client_id = "30QOMK0YSPXYE4KITHIQ31EGXR4JKMSLQJL20OOF5INLMONP";
-            var client_secret = "MUVZHUGKAARQQLQONA5KQU0A2PAVCLJARH0KYC3SX2OL1MXI";
-            var version = "20180816";
-            var near = "Amsterdam";
-            var query = marker.title;
-
-            // Ajax request for ID and more details
-            $.ajax({
-                url: foursquareSearchApi,
-                data: {
-                    client_id: client_id,
-                    client_secret: client_secret,
-                    v : version,
-                    near : near,
-                    query : query
-                },
-                success: function(data) {
-                    var venue_id = data.response.venues[0].id;
-                    $.ajax({
-                        url: foursquareVenuesApi+venue_id,
-                        data :{
-                            client_id: client_id,
-                            client_secret: client_secret,
-                            v : version,
-                        },
-                        success: function(data) {
-                            var tip = data.response.venue.tips.groups[0].items[0].text;
-                            infowindow.setContent('<div><b>'+ marker.title + '</b></div>'+
-                                '<div>' + tip + '</div>');
-                        },
-                        error: function() {
-                            alert("Oops, something went wrong, please try again.");
-                        }
-                    });
-
-                },
-                error: function() {
-                    alert("Something went wrong, please try again.");
-                }
-            });
-
-            marker.setAnimation(google.maps.Animation.DROP);
-            var infowindow = new google.maps.InfoWindow({maxWidth: 200});
-            infowindow.marker = marker;
-            infowindow.open(map, marker);
-        }
-
-        // Placing the markers and p
         for (var i = 0; i < amsLocations.length; i++) {
             // Adding marker to Map
             var marker= new google.maps.Marker({position: amsLocations[i].position, map: map, title: amsLocations[i].name});
@@ -94,6 +40,60 @@ function AppViewModel() {
         }
     }
     self.initMap();
+
+    function createInfoWindow(marker) {
+        // Yelp search api
+        var foursquareSearchApi = "https://api.foursquare.com/v2/venues/search";
+        var foursquareVenuesApi = "https://api.foursquare.com/v2/venues/"
+
+        // API parameters
+        var client_id = "30QOMK0YSPXYE4KITHIQ31EGXR4JKMSLQJL20OOF5INLMONP";
+        var client_secret = "MUVZHUGKAARQQLQONA5KQU0A2PAVCLJARH0KYC3SX2OL1MXI";
+        var version = "20180816";
+        var near = "Amsterdam";
+        var query = marker.title;
+
+        // Ajax request for ID and more details
+        $.ajax({
+            url: foursquareSearchApi,
+            data: {
+                client_id: client_id,
+                client_secret: client_secret,
+                v : version,
+                near : near,
+                query : query
+            },
+            success: function(data) {
+                var venue_id = data.response.venues[0].id;
+                $.ajax({
+                    url: foursquareVenuesApi+venue_id,
+                    data :{
+                        client_id: client_id,
+                        client_secret: client_secret,
+                        v : version,
+                    },
+                    success: function(data) {
+                        var tip = data.response.venue.tips.groups[0].items[0].text;
+                        infowindow.setContent('<div><b>'+ marker.title + '</b></div>'+
+                            '<div><u>Fourquare intel:</u></div>' + '<div>'+ tip + '</div>');
+                    },
+                    error: function() {
+                        alert("Oops, something went wrong, please try again.");
+                    }
+                });
+
+            },
+            error: function() {
+                alert("Something went wrong, please try again.");
+            }
+        });
+
+        marker.setAnimation(google.maps.Animation.DROP);
+        var infowindow = new google.maps.InfoWindow({maxWidth: 200});
+        infowindow.marker = marker;
+        infowindow.open(map, marker);
+    }
+
 
     // Action when place clicked in sidebar
     this.clickPlace = function(place) {
